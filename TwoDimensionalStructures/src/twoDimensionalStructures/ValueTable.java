@@ -1,20 +1,20 @@
 package twoDimensionalStructures;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 
-public class ValueTable implements Iterator<HashMap<Column, Object>> {
+public class ValueTable implements Iterator<HashMap<String, Object>> {
 	
 	ColumnsList columns;
-	List<HashMap<Column, Object>> rows;
+	List<HashMap<String, Object>> rows;
 		
 	public ValueTable() {
 		super();
-		this.columns = new ColumnsList();
+		this.columns = new ColumnsList(this);
 		this.rows    = new ArrayList<>();
 	}
 	
@@ -23,7 +23,7 @@ public class ValueTable implements Iterator<HashMap<Column, Object>> {
 		return rows.iterator().hasNext();
 	}
 	@Override
-	public HashMap<Column, Object> next() {
+	public HashMap<String, Object> next() {
 		return rows.iterator().next();
 	}
 	@Override
@@ -39,6 +39,14 @@ public class ValueTable implements Iterator<HashMap<Column, Object>> {
 	}
 	public void removeRow(Integer index) {
 		rows.remove(index);
+	}
+	
+	void deleteColumn(String columnName) {
+		
+	}
+	
+	void deleteColumns(Collection<?> c) {
+		
 	}
 
 }
