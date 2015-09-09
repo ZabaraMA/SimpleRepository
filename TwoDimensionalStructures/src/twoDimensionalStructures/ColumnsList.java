@@ -1,6 +1,7 @@
 package twoDimensionalStructures;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -63,8 +64,10 @@ public class ColumnsList implements Iterable<String>, RandomAccess, Cloneable, j
 	}
 
 	public boolean add(String columnName, List<Class<?>> types, int index) throws EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException {
+		
 		checkName(columnName);
 		checkTypeList(columnName, types);
+		
 		if (!cList.contains(columnName)) {
 			this.columnsTypes.put(columnName, types);
 			if (index == -1) 
@@ -80,11 +83,27 @@ public class ColumnsList implements Iterable<String>, RandomAccess, Cloneable, j
 	public boolean add(String columnName, List<Class<?>> types) throws EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException {
 		return add(columnName, types, -1);
 	}
+	
+	public boolean add(String columnName, Class<?> columnClass) throws EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException {
+		return add(columnName, new ArrayList<Class<?>>(Arrays.asList(columnClass)));
+	}
+	
+	public boolean add(String columnName, String typeName) throws EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException, ClassNotFoundException {
+		return add(columnName, Class.forName(typeName));
+	}
 
 	public boolean remove(Object o) {
 		this.columnsTypes.remove(o);
 		this.vt.deleteColumn((String) o);
 		return cList.remove(o);
+	}
+	
+	public boolean removeByIndex(int index) {
+		return remove(cList.get(index));
+	}
+	
+	public boolean remove(int index) {
+		return cList.remove(cList.get(index));
 	}
 
 	public boolean containsAll(Collection<?> c) {
@@ -100,7 +119,6 @@ public class ColumnsList implements Iterable<String>, RandomAccess, Cloneable, j
 		return cList.removeAll(c);
 	}
 
-		
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -117,10 +135,6 @@ public class ColumnsList implements Iterable<String>, RandomAccess, Cloneable, j
 		return cList.get(index);
 	}
 
-	public boolean remove(int index) {
-		return cList.remove(cList.get(index));
-	}
-
 	public int indexOf(Object o) {
 		return cList.indexOf(o);
 	}
@@ -130,15 +144,74 @@ public class ColumnsList implements Iterable<String>, RandomAccess, Cloneable, j
 	}
 
 	public ListIterator<String> listIterator() {
-		return cList.listIterator();
+		return new ColumnsListIterator();
 	}
 
 	public ListIterator<String> listIterator(int index) {
-		return cList.listIterator(index);
+		return new ColumnsListIterator(index);
 	}
 
 	public List<String> subListOfColumnNames(int fromIndex, int toIndex) {
 		return cList.subList(fromIndex, toIndex);
+	}
+	
+	private class ColumnsListIterator implements ListIterator<String> {
+
+		ListIterator<String> li;
+		
+		public ColumnsListIterator() {
+			li = cList.listIterator();
+		}
+		
+		public ColumnsListIterator(int index) {
+			li = cList.listIterator(index);
+		}
+
+		@Override
+		public boolean hasNext() {
+			return li.hasNext();
+		}
+
+		@Override
+		public String next() {
+			return li.next();
+		}
+
+		@Override
+		public boolean hasPrevious() {
+			return li.hasPrevious();
+		}
+
+		@Override
+		public String previous() {
+			return li.previous();
+		}
+
+		@Override
+		public int nextIndex() {
+			return li.nextIndex();
+		}
+
+		@Override
+		public int previousIndex() {
+			return li.previousIndex();
+		}
+
+		@Override
+		public void remove() {
+			ColumnsList.this.remove(li.next());
+		}
+
+		@Override
+		public void set(String e) {
+			li.set(e);	
+		}
+
+		@Override
+		public void add(String e) {
+			li.add(e);			
+		}
+		
 	}
 	
 }

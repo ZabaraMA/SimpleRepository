@@ -42,11 +42,12 @@ public class ValueTable implements Iterator<HashMap<String, Object>> {
 	}
 	
 	void deleteColumn(String columnName) {
+		System.out.print("Удаляем данные");
 		
 	}
 	
 	void deleteColumns(Collection<?> c) {
-		
+		System.out.print("Удаляем данные");	
 	}
 
 }
