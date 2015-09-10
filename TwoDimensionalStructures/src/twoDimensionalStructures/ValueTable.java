@@ -9,8 +9,8 @@ import java.util.List;
 
 public class ValueTable implements Iterator<HashMap<String, Object>> {
 	
-	ColumnsList columns;
-	List<HashMap<String, Object>> rows;
+	public ColumnsList columns;
+	public List<HashMap<String, Object>> rows;
 		
 	public ValueTable() {
 		super();
@@ -41,7 +41,7 @@ public class ValueTable implements Iterator<HashMap<String, Object>> {
 		rows.remove(index);
 	}
 	
-	void deleteColumn(String columnName) {
+	void deleteColumn(Column column) {
 		System.out.print("Удаляем данные");
 		
 	}

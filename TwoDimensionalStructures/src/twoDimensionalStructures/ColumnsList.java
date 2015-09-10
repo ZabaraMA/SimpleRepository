@@ -9,35 +9,21 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.RandomAccess;
 
-public class ColumnsList implements Iterable<String>, RandomAccess, Cloneable, java.io.Serializable {
+public class ColumnsList implements Iterable<Column>, RandomAccess, Cloneable, java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	List<String> cList;
-	HashMap<String, List<Class<?>>> columnsTypes;
+	List<Column> cList;
+	HashMap<String, Column> cNames;
 	ValueTable vt;
 	
 		ColumnsList(ValueTable vt) {
 		super();
-		this.cList        = new ArrayList<String>();
-		this.columnsTypes = new HashMap<>();
-		this.vt = vt;
+		this.cList  = new ArrayList<Column>();
+		this.cNames =  new HashMap<String, Column>();
+		this.vt     = vt;
 	}
 
-	private void checkName(String columnName) throws EmptyColumnNameException {
-		
-		if (columnName.trim().isEmpty()) 
-			{throw new EmptyColumnNameException();};
-	}
-	
-	private void checkTypeList(String columnName, List<Class<?>> typeList) throws EmptyTypeListException, NullTypeColumnException  {
-		
-		if (typeList.isEmpty()) 
-			{throw new EmptyTypeListException(columnName);};
-			
-		for (Class<?> type : typeList) 
-			{if (type == null) {throw new NullTypeColumnException(columnName, typeList.indexOf(type));}};	
-	}
 	
 	public int size() {
 		return cList.size();
@@ -51,7 +37,7 @@ public class ColumnsList implements Iterable<String>, RandomAccess, Cloneable, j
 		return cList.contains(o);
 	}
 
-	public Iterator<String> iterator() {
+	public Iterator<Column> iterator() {
 		return cList.iterator();
 	}
 
@@ -63,25 +49,29 @@ public class ColumnsList implements Iterable<String>, RandomAccess, Cloneable, j
 		return cList.toArray(a);
 	}
 
-	public boolean add(String columnName, List<Class<?>> types, int index) throws EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException {
+    public void add(Column col, int index) throws EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException {
 		
-		checkName(columnName);
-		checkTypeList(columnName, types);
+    	cList.add(index, col);
+		cNames.put(col.getColumnName(), col);
+	}
+    
+    public boolean add(Column col) {
 		
-		if (!cList.contains(columnName)) {
-			this.columnsTypes.put(columnName, types);
-			if (index == -1) 
-				return cList.add(columnName);
-			else {
-				cList.add(index, columnName);
-				return true;
-			}
-		}
-		else throw new DuplicateNameColumnException(columnName); 
+    	boolean ind = cList.add(col);
+    	cNames.put(col.getColumnName(), col);
+    	return ind;
+	}
+	
+	public void add(String columnName, List<Class<?>> types, int index) throws EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException {
+		
+		Column newColumn = new Column(this, columnName, types);
+		add(newColumn, index);
 	}
 	
 	public boolean add(String columnName, List<Class<?>> types) throws EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException {
-		return add(columnName, types, -1);
+		
+		Column newColumn = new Column(this, columnName, types);
+		return add(newColumn);
 	}
 	
 	public boolean add(String columnName, Class<?> columnClass) throws EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException {
@@ -92,30 +82,26 @@ public class ColumnsList implements Iterable<String>, RandomAccess, Cloneable, j
 		return add(columnName, Class.forName(typeName));
 	}
 
-	public boolean remove(Object o) {
-		this.columnsTypes.remove(o);
-		this.vt.deleteColumn((String) o);
+	public boolean remove(Column o) {
+		this.vt.deleteColumn(o);
+		this.cNames.remove(o.getColumnName());
 		return cList.remove(o);
 	}
 	
-	public boolean removeByIndex(int index) {
-		return remove(cList.get(index));
+	public boolean remove(int index) {
+		Column col = cList.get(index);
+		cNames.remove(col.getColumnName());
+		return remove(col);
 	}
 	
-	public boolean remove(int index) {
-		return cList.remove(cList.get(index));
-	}
-
-	public boolean containsAll(Collection<?> c) {
+	public boolean containsAll(Collection<? extends Column> c) {
 		return cList.containsAll(c);
 	}
 
-	public boolean removeAll(Collection<?> c) {
-		for (Object col : c) {
-			this.columnsTypes.remove(col);
-		}
-		
+	public boolean removeAll(Collection<? extends Column> c) {
 		this.vt.deleteColumns(c);
+		
+		for(Column col : c) {cNames.remove(col.getColumnName());};
 		return cList.removeAll(c);
 	}
 
@@ -125,39 +111,44 @@ public class ColumnsList implements Iterable<String>, RandomAccess, Cloneable, j
 		int result = 1;
 		result = prime * result + ((cList == null) ? 0 : cList.hashCode());
 		result = prime * result
-				+ ((columnsTypes == null) ? 0 : columnsTypes.hashCode());
+				+ ((cNames == null) ? 0 : cNames.hashCode());
 		result = prime * result + ((vt == null) ? 0 : vt.hashCode());
 		return result;
 	}
-
 	
-	public String getName(int index) {
+	public Column getColumn(int index) {
 		return cList.get(index);
+	}
+	
+	public Column getColumn(String columnName) {
+		return cNames.get(columnName);
 	}
 
 	public int indexOf(Object o) {
 		return cList.indexOf(o);
 	}
 
-	public int lastIndexOf(Object o) {
-		return cList.lastIndexOf(o);
-	}
-
-	public ListIterator<String> listIterator() {
+	public ListIterator<Column> listIterator() {
 		return new ColumnsListIterator();
 	}
 
-	public ListIterator<String> listIterator(int index) {
+	public ListIterator<Column> listIterator(int index) {
 		return new ColumnsListIterator(index);
 	}
 
-	public List<String> subListOfColumnNames(int fromIndex, int toIndex) {
+	public List<Column> subListOfColumnNames(int fromIndex, int toIndex) {
 		return cList.subList(fromIndex, toIndex);
 	}
 	
-	private class ColumnsListIterator implements ListIterator<String> {
+	public boolean remove(Object o) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-		ListIterator<String> li;
+	
+	private class ColumnsListIterator implements ListIterator<Column> {
+
+		ListIterator<Column> li;
 		
 		public ColumnsListIterator() {
 			li = cList.listIterator();
@@ -173,7 +164,7 @@ public class ColumnsList implements Iterable<String>, RandomAccess, Cloneable, j
 		}
 
 		@Override
-		public String next() {
+		public Column next() {
 			return li.next();
 		}
 
@@ -183,7 +174,7 @@ public class ColumnsList implements Iterable<String>, RandomAccess, Cloneable, j
 		}
 
 		@Override
-		public String previous() {
+		public Column previous() {
 			return li.previous();
 		}
 
@@ -203,43 +194,117 @@ public class ColumnsList implements Iterable<String>, RandomAccess, Cloneable, j
 		}
 
 		@Override
-		public void set(String e) {
+		public void set(Column e) {
 			li.set(e);	
 		}
 
 		@Override
-		public void add(String e) {
+		public void add(Column e) {
 			li.add(e);			
 		}
+	}
+
+}
+
+class Column {
+	
+	private String columnName;
+	private List<Class<?>> typeList;
+	private ColumnsList colList; 
+	
+	public Column(ColumnsList colList, String columnName, List<Class<?>> typeList) throws EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException {
+		super();
+		this.colList = colList;
+		this.setColumnName(columnName);
+		this.setTypeList(typeList);
+	}
+	
+	public Column(ColumnsList colList, String columnName, Class<?> type) throws EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException {
+		super();
+		this.colList = colList;
+		this.setColumnName(columnName);
+		this.setTypeList(new ArrayList<Class<?>>(Arrays.asList(type)));
+	}
+	
+	public Column(ColumnsList colList, String columnName, String className) throws ClassNotFoundException, EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException {
+		
+		this(colList, columnName, Class.forName(className));
+	}
+		
+	
+	private void checkName(String columnName) throws EmptyColumnNameException, DuplicateNameColumnException {
+		
+		if (columnName.trim().isEmpty()) 
+			{throw new EmptyColumnNameException();};
+			
+		Column col = colList.getColumn(columnName);
+		if (col != null && col.getColumnName().equals(columnName) && col != this) 
+			{throw new DuplicateNameColumnException(columnName);};
 		
 	}
 	
-}
+	private void checkTypeList(List<Class<?>> typeList) throws EmptyTypeListException, NullTypeColumnException  {
+		
+		if (typeList.isEmpty()) 
+			{throw new EmptyTypeListException(columnName);};
+			
+		for (Class<?> type : typeList) 
+			{if (type == null) {throw new NullTypeColumnException(columnName, typeList.indexOf(type));}};	
+	}
 
-class EmptyColumnNameException extends Exception {
+	public String getColumnName() {
+		return columnName;
+	}
 
-	private static final long serialVersionUID = 1L;
-	public EmptyColumnNameException() {super("Column name is empty!");} 		
+	public void setColumnName(String columnName) throws EmptyColumnNameException, DuplicateNameColumnException {
+		checkName(columnName);
+		this.columnName = columnName.trim();
+	}
+
 	
-}
-
-class EmptyTypeListException extends Exception {
-
-	private static final long serialVersionUID = 1L;
-	public EmptyTypeListException(String columnName) {super("Type list of column '" + columnName + "' is empty!");} 		
+	private void setTypeList(List<Class<?>> typeList) throws EmptyTypeListException, NullTypeColumnException {
+		checkTypeList(typeList);
+		this.typeList = typeList;
+	}
 	
-}
-
-class NullTypeColumnException extends Exception {
-
-	private static final long serialVersionUID = 1L;
-	public NullTypeColumnException(String columnName, int i) {super("Type list of column '" + columnName + "' contains null type (index = '" + i + "') !");} 		
 	
-}
+	Class<?>[] getArrayOfTypes() { 
+		return (Class<?>[]) typeList.toArray();
+	}
 
-class DuplicateNameColumnException extends Exception {
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((columnName == null) ? 0 : columnName.hashCode());
+		result = prime * result
+				+ ((typeList == null) ? 0 : typeList.hashCode());
+		return result;
+	}
 
-	private static final long serialVersionUID = 1L;
-	public DuplicateNameColumnException(String columnName) {super("Column with name '" + columnName + "' already exists!");} 		
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Column other = (Column) obj;
+		if (columnName == null) {
+			if (other.columnName != null)
+				return false;
+		} else if (!columnName.equals(other.columnName))
+			return false;
+		if (typeList == null) {
+			if (other.typeList != null)
+				return false;
+		} else if (typeList.size() != other.typeList.size())
+			return false;
+		else if (!typeList.containsAll(other.typeList))
+			return false;
+		return true;
+	}
 	
 }
