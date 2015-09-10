@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.RandomAccess;
 
+import twoDimensionalStructures.Exceptions.DuplicateNameColumnException;
+import twoDimensionalStructures.Exceptions.EmptyColumnNameException;
+import twoDimensionalStructures.Exceptions.EmptyTypeListException;
+import twoDimensionalStructures.Exceptions.NullTypeColumnException;
+
 public class ColumnsList implements Iterable<Column>, RandomAccess, Cloneable, java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -85,6 +90,9 @@ public class ColumnsList implements Iterable<Column>, RandomAccess, Cloneable, j
 	public boolean remove(Column o) {
 		this.vt.deleteColumn(o);
 		this.cNames.remove(o.getColumnName());
+		o.colList    = null;
+		o.columnName = null;
+		o.typeList   = null;
 		return cList.remove(o);
 	}
 	
@@ -140,12 +148,7 @@ public class ColumnsList implements Iterable<Column>, RandomAccess, Cloneable, j
 		return cList.subList(fromIndex, toIndex);
 	}
 	
-	public boolean remove(Object o) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	
+		
 	private class ColumnsListIterator implements ListIterator<Column> {
 
 		ListIterator<Column> li;
@@ -208,9 +211,9 @@ public class ColumnsList implements Iterable<Column>, RandomAccess, Cloneable, j
 
 class Column {
 	
-	private String columnName;
-	private List<Class<?>> typeList;
-	private ColumnsList colList; 
+	String columnName;
+	List<Class<?>> typeList;
+	ColumnsList colList; 
 	
 	public Column(ColumnsList colList, String columnName, List<Class<?>> typeList) throws EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException {
 		super();

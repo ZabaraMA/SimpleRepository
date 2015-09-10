@@ -4,18 +4,18 @@ import java.util.HashMap;
 
 public class Row {
 	
-	HashMap<String, Object> row;
+	HashMap<Column, Object> row;
 	ValueTable vtable;
 
-	public Row(ValueTable valueTable) {
+	Row(ValueTable valueTable) {
 		
-		this.row = new HashMap<String, Object>();
+		this.row = new HashMap<Column, Object>();
 		this.vtable = valueTable;
 	}
 	
-	public void setValue(String col, Object val) {
+	public void setValue(Column col, Object val) {
 		
-		//if (!this.vtable.columns.contains(col)) {throw Exception};
+//		if (!this.vtable.columns.contains(col)) {throw Exception};
 		
 //		for (Class<?> valType : col.getTypeList()) {
 //			

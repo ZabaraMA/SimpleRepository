@@ -1,4 +1,8 @@
 import twoDimensionalStructures.*;
+import twoDimensionalStructures.Exceptions.DuplicateNameColumnException;
+import twoDimensionalStructures.Exceptions.EmptyColumnNameException;
+import twoDimensionalStructures.Exceptions.EmptyTypeListException;
+import twoDimensionalStructures.Exceptions.NullTypeColumnException;
 
 public class Example {
 
@@ -6,10 +10,9 @@ public class Example {
 		// TODO Auto-generated method stub
 		ValueTable vt = new ValueTable();
 		ColumnsList cols = vt.columns;
-		cols.add("1", Class.forName("java.lang.String"));
-		cols.add("2", Class.forName("java.lang.String"));
+		cols.add("1", Integer.class);
+		cols.add("2", Integer.class);
 		System.out.println(vt.columns.size());
-		
 		
 	}
 
