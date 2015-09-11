@@ -14,7 +14,7 @@ import twoDimensionalStructures.Exceptions.EmptyColumnNameException;
 import twoDimensionalStructures.Exceptions.EmptyTypeListException;
 import twoDimensionalStructures.Exceptions.NullTypeColumnException;
 
-public class ColumnsList implements Iterable<Column>, RandomAccess, Cloneable, java.io.Serializable {
+public class Columns implements Iterable<Column>, RandomAccess, java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -22,7 +22,7 @@ public class ColumnsList implements Iterable<Column>, RandomAccess, Cloneable, j
 	HashMap<String, Column> cNames;
 	ValueTable vt;
 	
-	ColumnsList(ValueTable vt) {
+	protected Columns(ValueTable vt) {
 		super();
 		this.cList  = new ArrayList<Column>();
 		this.cNames =  new HashMap<String, Column>();
@@ -148,6 +148,11 @@ public class ColumnsList implements Iterable<Column>, RandomAccess, Cloneable, j
 		return cList.subList(fromIndex, toIndex);
 	}
 	
+	@Override
+	public String toString() {
+		return cList.toString();
+	}
+	
 		
 	private class ColumnsListIterator implements ListIterator<Column> {
 
@@ -193,7 +198,7 @@ public class ColumnsList implements Iterable<Column>, RandomAccess, Cloneable, j
 
 		@Override
 		public void remove() {
-			ColumnsList.this.remove(li.next());
+			Columns.this.remove(li.next());
 		}
 
 		@Override
@@ -207,107 +212,5 @@ public class ColumnsList implements Iterable<Column>, RandomAccess, Cloneable, j
 		}
 	}
 
-}
 
-class Column {
-	
-	String columnName;
-	List<Class<?>> typeList;
-	ColumnsList colList; 
-	
-	public Column(ColumnsList colList, String columnName, List<Class<?>> typeList) throws EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException {
-		super();
-		this.colList = colList;
-		this.setColumnName(columnName);
-		this.setTypeList(typeList);
-	}
-	
-	public Column(ColumnsList colList, String columnName, Class<?> type) throws EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException {
-		super();
-		this.colList = colList;
-		this.setColumnName(columnName);
-		this.setTypeList(new ArrayList<Class<?>>(Arrays.asList(type)));
-	}
-	
-	public Column(ColumnsList colList, String columnName, String className) throws ClassNotFoundException, EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException {
-		
-		this(colList, columnName, Class.forName(className));
-	}
-		
-	
-	private void checkName(String columnName) throws EmptyColumnNameException, DuplicateNameColumnException {
-		
-		if (columnName.trim().isEmpty()) 
-			{throw new EmptyColumnNameException();};
-			
-		Column col = colList.getColumn(columnName);
-		if (col != null && col.getColumnName().equals(columnName) && col != this) 
-			{throw new DuplicateNameColumnException(columnName);};
-		
-	}
-	
-	private void checkTypeList(List<Class<?>> typeList) throws EmptyTypeListException, NullTypeColumnException  {
-		
-		if (typeList.isEmpty()) 
-			{throw new EmptyTypeListException(columnName);};
-			
-		for (Class<?> type : typeList) 
-			{if (type == null) {throw new NullTypeColumnException(columnName, typeList.indexOf(type));}};	
-	}
-
-	public String getColumnName() {
-		return columnName;
-	}
-
-	public void setColumnName(String columnName) throws EmptyColumnNameException, DuplicateNameColumnException {
-		checkName(columnName);
-		this.columnName = columnName.trim();
-	}
-
-	
-	private void setTypeList(List<Class<?>> typeList) throws EmptyTypeListException, NullTypeColumnException {
-		checkTypeList(typeList);
-		this.typeList = typeList;
-	}
-	
-	
-	Class<?>[] getArrayOfTypes() { 
-		return (Class<?>[]) typeList.toArray();
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((columnName == null) ? 0 : columnName.hashCode());
-		result = prime * result
-				+ ((typeList == null) ? 0 : typeList.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Column other = (Column) obj;
-		if (columnName == null) {
-			if (other.columnName != null)
-				return false;
-		} else if (!columnName.equals(other.columnName))
-			return false;
-		if (typeList == null) {
-			if (other.typeList != null)
-				return false;
-		} else if (typeList.size() != other.typeList.size())
-			return false;
-		else if (!typeList.containsAll(other.typeList))
-			return false;
-		return true;
-	}
-	
 }

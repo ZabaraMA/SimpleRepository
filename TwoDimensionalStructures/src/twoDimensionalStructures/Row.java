@@ -1,6 +1,8 @@
 package twoDimensionalStructures;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import twoDimensionalStructures.*;
 import twoDimensionalStructures.Exceptions.*;
@@ -10,7 +12,7 @@ public class Row {
 	HashMap<Column, Object> row;
 	ValueTable vtable;
 
-	Row(ValueTable valueTable) {
+	protected Row(ValueTable valueTable) {
 		
 		this.row = new HashMap<Column, Object>();
 		this.vtable = valueTable;
@@ -45,11 +47,53 @@ public class Row {
 	}
 	
 	public Object getValue(int index) {
-		return row.get(vtable.columns.getColumn(index));
+		return getValue(vtable.columns.getColumn(index));
 	}
 	
 	public Object getValue(String columnName) {
-		return row.get(vtable.columns.getColumn(columnName));
+		return getValue(vtable.columns.getColumn(columnName));
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((row == null) ? 0 : row.hashCode());
+		result = prime * result + ((vtable == null) ? 0 : vtable.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Row other = (Row) obj;
+		
+		if (!vtable.equals(other.vtable))
+			return false;
+		for(Column col : vtable.getColumns()) {
+			if (!this.getValue(col).equals(other.getValue(col))) {
+				return false;
+			}
+		};		
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+	
+		for (Column col : vtable.getColumns()) {
+			sb.append(",[[");
+			sb.append(col.getColumnName());
+			sb.append("],[");
+			sb.append(row.get(col));
+			sb.append("]]");
+		}
+		return sb.toString();
+	}
 }
