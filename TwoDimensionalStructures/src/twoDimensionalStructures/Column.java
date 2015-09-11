@@ -9,7 +9,7 @@ import twoDimensionalStructures.Exceptions.EmptyColumnNameException;
 import twoDimensionalStructures.Exceptions.EmptyTypeListException;
 import twoDimensionalStructures.Exceptions.NullTypeColumnException;
 
-class Column {
+public class Column {
 	
 	String columnName;
 	List<Class<?>> typeList;

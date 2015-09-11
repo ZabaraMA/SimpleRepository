@@ -75,12 +75,14 @@ public class ValueTable implements Cloneable {
 		return sb.toString();
 	}
 	
-	public ValueTable clone() {
+	public ValueTable clone(List<Column> cl) {
 		ValueTable vt = new ValueTable();
 		Columns cols = vt.getColumns();
 		for (Column col : this.getColumns()) {
 			try {
-				cols.add(col.getColumnName(), new ArrayList<Class<?>>(Arrays.asList(col.getArrayOfTypes())));
+				if ((cl == null) || cl.isEmpty() || cl.contains(col))
+				{cols.add(col.getColumnName(), 
+						new ArrayList<Class<?>>(Arrays.asList(col.getArrayOfTypes())));};
 			} catch (EmptyColumnNameException | EmptyTypeListException
 					| NullTypeColumnException | DuplicateNameColumnException e) {
 				e.printStackTrace();
@@ -101,8 +103,12 @@ public class ValueTable implements Cloneable {
 		return vt;
 	}
 	
+	public ValueTable clone() {
+		return this.clone(null);
+	}
+	
 	public ValueTable copyColumns(List<Integer> columnArray) throws CloneNotSupportedException {
-		ValueTable newT = this.clone();
+		ValueTable newT = this;
 		
 		return newT;
 		

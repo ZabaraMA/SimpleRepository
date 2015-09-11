@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import twoDimensionalStructures.*;
 import twoDimensionalStructures.Exceptions.DuplicateNameColumnException;
 import twoDimensionalStructures.Exceptions.EmptyColumnNameException;
@@ -13,7 +16,7 @@ public class Example {
 		Columns cols = vt.getColumns();
 		Rows rows = vt.getRows();
 		
-		cols.add("1", String.class);
+		cols.add("1", Integer.class);
 		cols.add("2", String.class);
 		
 		rows.add();
@@ -21,7 +24,7 @@ public class Example {
 		
 		
 		vt.fill(cols.getColumn(1), "100");
-		vt.fill(cols.getColumn(0), "200");
+		vt.fill(cols.getColumn(0), "200ert");
 		rows.add(2);
 		System.out.println(rows.size());
 		//cols.remove(0);
@@ -31,9 +34,11 @@ public class Example {
 		
 		ValueTable newTable = vt.copyColumns(null);
 			
-		System.out.println(vt.toString());
 		
-		System.out.println(vt.clone().toString());
+		
+		System.out.println(vt.clone(   Arrays.asList(cols.getColumn(0))                ));
+		
+		System.out.println(vt.toString());
 	}
 
 }
