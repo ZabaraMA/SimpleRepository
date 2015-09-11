@@ -1,7 +1,5 @@
 package twoDimensionalStructures;
 
-import java.util.ListIterator;
-
 import twoDimensionalStructures.Exceptions.DuplicateNameColumnException;
 import twoDimensionalStructures.Exceptions.EmptyColumnNameException;
 import twoDimensionalStructures.Exceptions.EmptyTypeListException;

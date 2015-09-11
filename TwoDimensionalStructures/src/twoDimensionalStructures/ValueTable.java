@@ -18,6 +18,12 @@ public class ValueTable implements Iterator<HashMap<String, Object>> {
 		this.rows    = new ArrayList<>();
 	}
 	
+	
+	
+	public ColumnsList getColumns() {
+		return columns;
+	}
+
 	@Override
 	public boolean hasNext() {
 		return rows.iterator().hasNext();

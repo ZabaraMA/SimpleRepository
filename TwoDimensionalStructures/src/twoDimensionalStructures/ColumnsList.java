@@ -22,7 +22,7 @@ public class ColumnsList implements Iterable<Column>, RandomAccess, Cloneable, j
 	HashMap<String, Column> cNames;
 	ValueTable vt;
 	
-		ColumnsList(ValueTable vt) {
+	ColumnsList(ValueTable vt) {
 		super();
 		this.cList  = new ArrayList<Column>();
 		this.cNames =  new HashMap<String, Column>();
