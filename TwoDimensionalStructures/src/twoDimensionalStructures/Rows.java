@@ -3,6 +3,7 @@ package twoDimensionalStructures;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.RandomAccess;
 import java.util.Map.Entry;
 
@@ -10,7 +11,7 @@ public class Rows implements Iterable<Row>, RandomAccess, java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private List<Row> rList;
+	List<Row> rList;
 	ValueTable vt;
 	
 	protected Rows(ValueTable vt) {
@@ -34,7 +35,7 @@ public class Rows implements Iterable<Row>, RandomAccess, java.io.Serializable {
 	
 	public int add() {
 		rList.add(new Row(vt));
-		return rList.size();
+		return rList.size() - 1;
 	}
 	
 	public void add(int index) {
@@ -64,6 +65,6 @@ public class Rows implements Iterable<Row>, RandomAccess, java.io.Serializable {
 		};
 		return sb.toString();
 	}
-	
+
 	
 }

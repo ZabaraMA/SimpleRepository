@@ -32,13 +32,14 @@ public class Example {
 		//li.next();
 		//li.remove();
 		
-		ValueTable newTable = vt.copyColumns(null);
+		//ValueTable newTable = vt.copyColumns(null);
 			
 		
-		
-		System.out.println(vt.clone(   Arrays.asList(cols.getColumn(0))                ));
-		
 		System.out.println(vt.toString());
+		
+	
+		
+		
 	}
 
 }

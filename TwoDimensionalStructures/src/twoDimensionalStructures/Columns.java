@@ -25,7 +25,7 @@ public class Columns implements Iterable<Column>, RandomAccess, java.io.Serializ
 	protected Columns(ValueTable vt) {
 		super();
 		this.cList  = new ArrayList<Column>();
-		this.cNames =  new HashMap<String, Column>();
+		this.cNames = new HashMap<String, Column>();
 		this.vt     = vt;
 	}
 
@@ -43,7 +43,7 @@ public class Columns implements Iterable<Column>, RandomAccess, java.io.Serializ
 	}
 
 	public Iterator<Column> iterator() {
-		return cList.iterator();
+		return new ColumnsListIterator();
 	}
 
 	public Object[] toArray() {
