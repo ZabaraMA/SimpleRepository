@@ -3,6 +3,8 @@
 	<name>TwoDimensionalStructures</name>
 	<comment></comment>
 	<projects>
+		<project>Quiz</project>
+		<project>QuizProject</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

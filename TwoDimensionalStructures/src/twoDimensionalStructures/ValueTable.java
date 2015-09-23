@@ -1,5 +1,8 @@
 package twoDimensionalStructures;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,6 +31,24 @@ public class ValueTable implements Cloneable {
 		super();
 		this.columns = new Columns(this);
 		this.rows    = new Rows(this);
+	}
+	
+	public ValueTable(ResultSet rs) throws SQLException, ClassNotFoundException, EmptyColumnNameException, EmptyTypeListException, NullTypeColumnException, DuplicateNameColumnException, NoSuchColumnInValueTable {
+		
+		this();
+	
+		ResultSetMetaData metadata = rs.getMetaData();
+		for (int i = 1; i <= metadata.getColumnCount(); i++) {
+			columns.add(metadata.getColumnName(i), metadata.getColumnClassName(i));
+		}
+		
+		while (rs.next()) {
+			int n = rows.add();
+			for (int i = 0; i < columns.size(); i++) {
+				rows.getRow(n).setValue(i, rs.getObject(i+1));
+				}
+		}
+			
 	}
 	
 	public Columns getColumns() {
