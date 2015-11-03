@@ -63,13 +63,20 @@ public class ValueTable implements Cloneable {
 		
 		for (Row row : rows) {
 			row.row.remove(column);
-		}
+		};
+		
+		this.columns.remove(column);
 	}
 	
 	public void deleteColumns(Collection<? extends Column> c) {
-		for (Column col : columns) {
-			deleteColumn(col);
-		}
+		
+		for (Row row : rows) {
+			for (Column col : c) {
+				row.row.remove(col);
+			}
+		};
+		
+		this.columns.removeAll(c);
 	}
 	
 	public void fill(Column col, Object o) throws NoSuchColumnInValueTable {
@@ -132,9 +139,19 @@ public class ValueTable implements Cloneable {
 		return this.clone(null);
 	}
 	
-	public ValueTable group(List<? extends Column> cl) {
+	public ValueTable group(List<? extends Column> colList) {
 
-		ValueTable vt = this.clone(cl);
+		ValueTable vt = this.clone(colList);
+		
+		HashSet<Row> colSet = new HashSet<Row>(vt.getRows().rList);
+		vt.getRows().rList = new ArrayList<>(colSet);		
+		
+		return vt;
+	}
+	
+	public ValueTable aggregate(List<? extends Column> colList, Map<? extends Column, AggregateFunction> agMap) {
+
+		ValueTable vt = this.clone(colList);
 		
 		HashSet<Row> colSet = new HashSet<Row>(vt.getRows().rList);
 		vt.getRows().rList = new ArrayList<>(colSet);		

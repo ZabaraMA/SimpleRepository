@@ -62,19 +62,6 @@ public class Proof {
 		
 		//System.out.println(ud.selectAll());
 		
-		try (Connection connection = DataSource.getConnection();
-				PreparedStatement statement = connection.prepareStatement(UserDao.SELECT_ALL))				
-				{	
-					
-					ResultSet rs = statement.executeQuery();
-					connection.commit();
-					System.out.println(new ValueTable(rs).toString());
-					
-								
-				} catch (SQLException | IOException | PropertyVetoException e) {
-					
-					e.printStackTrace();
-				}
 	//	UserDao ud = new UserDao(); 
 	//	System.out.println(ud.selectAll().size());
 	}
